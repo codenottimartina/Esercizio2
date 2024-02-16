@@ -9,19 +9,28 @@ Random rand = new Random();
 
 int numSorteggiato = rand.Next(1, 100); // numero creato randomicamente
 
+var numeriInseriti = new List<int>();
+
 Console.WriteLine(numSorteggiato);
 
 int? numeroInserito = Utilities.AcquisisciInteroDaConsole("Ciao! Indovina il numero che ho scelto [compreso tra 1-100]", 1, 100);
 
 while(numeroInserito != null)
 {
+    numeriInseriti.Add(numeroInserito.Value);
 
     if(Utilities.CheckVittoria(numeroInserito.Value, numSorteggiato))
     {
         break;
     }
-
     numeroInserito = Utilities.AcquisisciInteroDaConsole("Riprova: ", 1, 100);
+}
+
+Console.WriteLine("Tentativi totali: " + numeriInseriti.Count);
+Console.WriteLine("Tutti i numeri inseriti: ");
+foreach(int numero in numeriInseriti)
+{
+    Console.Write(numero + " ");
 }
 
 class Utilities
