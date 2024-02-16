@@ -11,37 +11,94 @@ int numSorteggiato = rand.Next(1, 100); // numero creato randomicamente
 
 Console.WriteLine(numSorteggiato);
 
-Console.WriteLine("Ciao! Indovina il numero che ho scelto [compreso tra 1-100]");
+int? numeroInserito = Utilities.AcquisisciInteroDaConsole("Ciao! Indovina il numero che ho scelto [compreso tra 1-100]", 1, 100);
 
-var stringaAcquisita = Console.ReadLine();
-
-while(stringaAcquisita != "")
+while(numeroInserito != null)
 {
-    int numeroInserito = 0;
-    try
+
+    if(Utilities.CheckVittoria(numeroInserito.Value, numSorteggiato))
     {
-        numeroInserito = Convert.ToInt32(stringaAcquisita);
-    }
-    catch
-    {
-        Console.WriteLine("Il valore inserito non è valido");
+        break;
     }
 
-    if(numeroInserito == numSorteggiato)
+    numeroInserito = Utilities.AcquisisciInteroDaConsole("Riprova: ", 1, 100);
+}
+
+class Utilities
+{
+    public static int? AcquisisciInteroDaConsole(string messsaggioUtente, int min, int max)
     {
-        Console.WriteLine("Hai vinto!");
-        return;
-    }
-    else
-    {
-        Console.WriteLine("Non hai indovinato :(");
-        if(numeroInserito > numSorteggiato)
+        int numeroInserito;
+        Console.WriteLine(messsaggioUtente);
+        var stringaAcquisita = Console.ReadLine();
+        if(stringaAcquisita == "")
         {
-            Console.WriteLine("Il numero che ho scelto è minore di " + numeroInserito);
-        }else
-        {
-            Console.WriteLine("Il numero che ho scelto è maggiore di " + numeroInserito);
+            return null;
         }
-        stringaAcquisita = Console.ReadLine();
+
+        try
+        {
+            numeroInserito = Convert.ToInt32(stringaAcquisita);
+        }
+        catch
+        {
+            Console.WriteLine("Attenzione, il valore inserito non è valido");
+            return AcquisisciInteroDaConsole(messsaggioUtente, min, max);
+        }
+
+        if(!(
+            _checkValoreMinoreSogliaMax(numeroInserito, max) 
+            && _checkValoreMaggioreSogliaMin(numeroInserito, min)
+            ))
+        {
+            return AcquisisciInteroDaConsole(messsaggioUtente, min, max);
+        }
+
+        return numeroInserito;
+    }
+
+    private static bool _checkValoreMaggioreSogliaMin(int numeroInserito, int min)
+    {
+        if(numeroInserito < min)
+        {
+            Console.WriteLine("Attenzione, il valore non può essere minore di " + min);
+            return false;
+        }
+
+        return true;
+    }
+
+    private static bool _checkValoreMinoreSogliaMax(int numeroInserito, int max)
+    {
+        if (numeroInserito > max)
+        {
+            Console.WriteLine("Attenzione, il valore non può essere maggiore di " + max);
+            return false;
+        }
+
+        return true;
+    }
+
+    public static bool CheckVittoria(int numeroInserito, int numeroSorteggiato)
+    {
+        if(numeroInserito == numeroSorteggiato)
+        {
+            Console.WriteLine("Complimenti, Hai vinto!");
+            return true;
+        }
+        else
+        {
+            Console.WriteLine("Non hai indovinato :(");
+            if (numeroInserito > numeroSorteggiato)
+            {
+                Console.WriteLine("Il numero che ho scelto è minore di " + numeroInserito);
+            }
+            else
+            {
+                Console.WriteLine("Il numero che ho scelto è maggiore di " + numeroInserito);
+            }
+
+            return false;
+        }
     }
 }
